@@ -161,6 +161,24 @@ All experiments are conducted on an NVIDIA RTX 3090 GPU.
 In FP32 precision, the RTX 3090 delivers approximately 35.58 TFLOPs of compute performance, as reported by multiple hardware benchmarks.
 
 ---
+## LoRa tuning Game plan 
+
+In the vanilla LoRa notebook we will demonstrate the implementation of LoRa by recreating the results of the paper, using our own model and datasets without the use of external high level libraries like hugging face's PEFT library, the only thing that will be used here is pytorch, and numpy for tensor / numpy array operations. 
+
+### Step 1 
+Retrieve the model using hugging face's transformer library and store the weights of the q, k, and v linear projection weight matrices of the self attention layer locally for each attention head .
+- There are 11 total self attention heads 
+  - Therefore we will be storing 3 * 11 weight matrices for each head 
+  - Where the shape of each Linear projection layer is 768*768 using float 32 dtype (this will be important in optimizing later experiments)
+
+### Step 2 Define the LoRa helper functions:
+We'll need a mechanism to turn of gradient calculations for our target linear layers and define our new rank matrices A and B where $$ A \e \R^{d \times r} \and B \e \R^{r \times k} $$ and $$ r << \min(d,k) $$ We'll freeze W_0 whic is represented as the original weight matrix for the entire model, and 
+
+#### A and B initialization 
+  - As described in the paper A will be initialized using the Gaussian initialization 
+  - And B will be initialized to 0. 
+  - Downstream, we'll test different initialization methods for each matrix and record our results respectively. 
+Since B is initialized to 0 at the begining $$\Delta W = AB $$ will be 0 when training starts and eventually scale $$\Delta W $$ by $$ \frac {\alpha}{r}$$ 
 
 ### Objective
 
