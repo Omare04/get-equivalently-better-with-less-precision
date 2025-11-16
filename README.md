@@ -172,7 +172,27 @@ Retrieve the model using hugging face's transformer library and store the weight
   - Where the shape of each Linear projection layer is 768*768 using float 32 dtype (this will be important in optimizing later experiments)
 
 ### Step 2 Define the LoRa helper functions:
-We'll need a mechanism to turn of gradient calculations for our target linear layers and define our new rank matrices A and B where $$ A \e \R^{d \times r} \and B \e \R^{r \times k} $$ and $$ r << \min(d,k) $$ We'll freeze W_0 whic is represented as the original weight matrix for the entire model, and 
+We'll need a mechanism to turn off gradient calculations for our target linear layers and define our new rank matrices \(A\) and \(B\) where
+
+\[
+B \in \mathbb{R}^{d \times r}, \qquad A \in \mathbb{R}^{r \times k},
+\]
+
+and
+
+\[
+r \ll \min(d, k).
+\]
+
+We'll freeze \(W_0\), which is the original weight matrix for the entire model.
+
+Note that both \(W_0\) and \(\Delta W = BA\) are multiplied by the same input \(x\), and their
+respective output vectors are summed coordinate-wise. For \(h = W_0 x\), our modified forward
+pass becomes:
+
+\[
+h = W_0 x + \Delta W\, x = W_0 x + BAx.
+\]
 
 #### A and B initialization 
   - As described in the paper A will be initialized using the Gaussian initialization 
@@ -184,3 +204,5 @@ Since B is initialized to 0 at the begining $$\Delta W = AB $$ will be 0 when tr
 
 
 The primary goal of these experiments is to evaluate whether PEFT (specifically LoRA and QLoRA) provides an effective and resource-efficient approach to fine-tuning large language models — achieving comparable or better performance using far fewer computational resources.
+
+Due to computational restrains we opted for preprocessing the datasets in batches not all at once, since we are running rank ablations tests 
