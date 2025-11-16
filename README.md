@@ -204,3 +204,5 @@ Since B is initialized to 0 at the begining $$\Delta W = AB $$ will be 0 when tr
 
 
 The primary goal of these experiments is to evaluate whether PEFT (specifically LoRA and QLoRA) provides an effective and resource-efficient approach to fine-tuning large language models — achieving comparable or better performance using far fewer computational resources.
+
+Due to computational restrains we opted for preprocessing the datasets in batches not all at once, since we are running rank ablations tests 
