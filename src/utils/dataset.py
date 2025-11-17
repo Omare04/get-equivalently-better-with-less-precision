@@ -14,6 +14,34 @@ from datasets import load_dataset, Dataset
 from typing import List, Dict
 from . import text_cleaners
 
+# dataset_configs = {
+#     "imdb": {
+#         "path": "imdb",
+#         "splits": ["train", "test", "unsupervised"],
+#         "text_column": "text",
+#         "label_column": "label"
+#     },
+#     "wikitext": {
+#         "path": "wikitext",
+#         "name": "wikitext-2-raw-v1",
+#         "splits": ["train", "validation", "test"],
+#         "text_column": "text",
+#         "label_column": None
+#     },
+#     "sst2": {
+#         "path": "glue",
+#         "name": "sst2",
+#         "splits": ["train", "validation", "test"],
+#         "text_column": "sentence",
+#         "label_column": "label"
+#     },
+#     "squad_v2": {
+#         "path": "squad_v2",
+#         "splits": ["train", "validation"],
+#         "text_column": "context",
+#         "label_column": None
+#     }
+# }
 dataset_configs = {
     "imdb": {
         "path": "imdb",
@@ -34,14 +62,7 @@ dataset_configs = {
         "splits": ["train", "validation"]
     }
 }
-
 def getRawDataset(dataset_name: str, split: str = "train") -> Dataset:
-    """
-    Args:
-        dataset name 
-    Returns:
-        return dataset
-    """
     if dataset_name not in dataset_configs:
         raise ValueError(
             f"Unknown dataset: {dataset_name}. "
@@ -82,17 +103,19 @@ def preprocess(batch, dataset_name):
             f"Unknown dataset: {dataset_name}. "
             f"Supported: imdb, wikitext, sst2, squad"
         )
-    
-def getDatasetBatch(batch_size: int, dataset_name: str, split: str = "train") -> dict:
 
-    ds = getRawDataset(dataset_name, split)
-    
-    batch_size = min(batch_size, len(ds))
-    
-    batch = {
-        'text': [ds[i]['text'] for i in range(batch_size)],
-        'label': [ds[i]['label'] for i in range(batch_size)]
-    }
-    
-    cleaned_batch = preprocess(batch, dataset_name)
+def getDatasetBatch(batch_size: int, dataset_name: str, split: str = "train") -> Dict:
+    raw_dataset = getRawDataset(dataset_name, split)
+    batch = raw_dataset.select(range(batch_size))
+
+    if dataset_name == "wikitext":
+        batch = [item for item in batch if item['text'].strip() != '']
+
+    if dataset_name == "sst2":
+        batch_dict = {k: [item[k] for item in batch] for k in batch[0]}
+        cleaned_batch = preprocess(batch_dict, dataset_name)
+    else:
+        batch_dict = {k: [item[k] for item in batch] for k in batch[0]}
+        cleaned_batch = preprocess(batch_dict, dataset_name)
+
     return cleaned_batch
