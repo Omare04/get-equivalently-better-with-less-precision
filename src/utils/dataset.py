@@ -11,6 +11,8 @@
 # ds = load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1", split="train") & SST-2 & IMDB training & SQuAD v1.1
 
 from datasets import load_dataset, Dataset
+from typing import List, Dict
+import re
 
 dataset_configs = {
     "imdb": {
@@ -30,11 +32,7 @@ dataset_configs = {
     "squad_v2": {
         "path": "squad_v2",
         "splits": ["train", "validation"]
-    },
-    "yelp": {
-        "path": "yelp_review_full",
-        "splits": ["train", "test"]
-    },
+    }
 }
 
 def getRawDataset(dataset_name: str, split: str = "train") -> Dataset:
@@ -70,6 +68,29 @@ def getRawDataset(dataset_name: str, split: str = "train") -> Dataset:
     except Exception as e:
         raise RuntimeError(f"Failed to load {dataset_name}: {str(e)}")
     
-def preprocess():
+def preprocess(batch, dataset_name):
+    if dataset_name == "imdb":
+        return _preprocessIMDB(batch)
+    elif dataset_name == "wikitext":
+        return _preprocessWikitext(batch)
+    elif dataset_name == "sst2":
+        return _preprocessSST2(batch)
+    elif dataset_name == "squad" or dataset_name == "squad_v2":
+        return _preprocessSQuAD(batch)
+    else:
+        raise ValueError(
+            f"Unknown dataset: {dataset_name}. "
+            f"Supported: imdb, wikitext, sst2, squad"
+        )
+    
+def _preprocessIMDB(batch: Dict) -> List[str]:
+    return []
 
-    return null
+def _preprocessWikitext(batch: Dict) -> List[str]:    
+    return []
+
+def _preprocessSST2(batch: Dict) -> List[str]:
+    return []
+
+def _preprocessSQuAD(batch: Dict) -> List[str]:
+    return []
