@@ -12,7 +12,7 @@
 
 from datasets import load_dataset, Dataset
 from typing import List, Dict
-import re
+from . import text_cleaners
 
 dataset_configs = {
     "imdb": {
@@ -70,27 +70,29 @@ def getRawDataset(dataset_name: str, split: str = "train") -> Dataset:
     
 def preprocess(batch, dataset_name):
     if dataset_name == "imdb":
-        return _preprocessIMDB(batch)
+        return text_cleaners._preprocessIMDB(batch)
     elif dataset_name == "wikitext":
-        return _preprocessWikitext(batch)
+        return text_cleaners._preprocessWikitext(batch)
     elif dataset_name == "sst2":
-        return _preprocessSST2(batch)
+        return text_cleaners._preprocessSST2(batch)
     elif dataset_name == "squad" or dataset_name == "squad_v2":
-        return _preprocessSQuAD(batch)
+        return text_cleaners._preprocessSQuAD(batch)
     else:
         raise ValueError(
             f"Unknown dataset: {dataset_name}. "
             f"Supported: imdb, wikitext, sst2, squad"
         )
     
-def _preprocessIMDB(batch: Dict) -> List[str]:
-    return []
+def getDatasetBatch(batch_size: int, dataset_name: str, split: str = "train") -> dict:
 
-def _preprocessWikitext(batch: Dict) -> List[str]:    
-    return []
-
-def _preprocessSST2(batch: Dict) -> List[str]:
-    return []
-
-def _preprocessSQuAD(batch: Dict) -> List[str]:
-    return []
+    ds = getRawDataset(dataset_name, split)
+    
+    batch_size = min(batch_size, len(ds))
+    
+    batch = {
+        'text': [ds[i]['text'] for i in range(batch_size)],
+        'label': [ds[i]['label'] for i in range(batch_size)]
+    }
+    
+    cleaned_batch = preprocess(batch, dataset_name)
+    return cleaned_batch
