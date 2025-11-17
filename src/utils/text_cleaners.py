@@ -49,4 +49,10 @@ def _preprocessSST2(batch: Dict) -> Dict:
     }
 
 def _preprocessSQuAD(batch: Dict) -> Dict:
-    return batch
+    cleaned_contexts = [clean_newlines(clean_brs(c)) for c in batch['context']]
+    cleaned_questions = [clean_spaces(q) for q in batch['question']]
+    return {
+        'context': cleaned_contexts,
+        'question': cleaned_questions,
+        'answers': batch['answers']
+    }

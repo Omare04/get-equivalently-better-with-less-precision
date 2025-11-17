@@ -1,47 +1,7 @@
-## 
-# 1 function that will get me a dataset with no preprocessing given a specific Name you know . 
-# 
-# 2 a preprocessing function for every specific dataset, since every dataset have some noise in it. i.e the wikidataset contain \n & ' ' and "====" which will cluter the training stuff
-# also the sentiment analysis preprocessing is diffrent from a set to the other
-# 
-# we have to preprocess per batch
-# # 
-# 3 we need a function called         cleaned_dataset = preprocessDataset(batch_size, x, dataset_name) or getDataSetBatch(same parameters
-
-# ds = load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1", split="train") & SST-2 & IMDB training & SQuAD v1.1
-
 from datasets import load_dataset, Dataset
 from typing import List, Dict
 from . import text_cleaners
 
-# dataset_configs = {
-#     "imdb": {
-#         "path": "imdb",
-#         "splits": ["train", "test", "unsupervised"],
-#         "text_column": "text",
-#         "label_column": "label"
-#     },
-#     "wikitext": {
-#         "path": "wikitext",
-#         "name": "wikitext-2-raw-v1",
-#         "splits": ["train", "validation", "test"],
-#         "text_column": "text",
-#         "label_column": None
-#     },
-#     "sst2": {
-#         "path": "glue",
-#         "name": "sst2",
-#         "splits": ["train", "validation", "test"],
-#         "text_column": "sentence",
-#         "label_column": "label"
-#     },
-#     "squad_v2": {
-#         "path": "squad_v2",
-#         "splits": ["train", "validation"],
-#         "text_column": "context",
-#         "label_column": None
-#     }
-# }
 dataset_configs = {
     "imdb": {
         "path": "imdb",
@@ -62,6 +22,7 @@ dataset_configs = {
         "splits": ["train", "validation"]
     }
 }
+
 def getRawDataset(dataset_name: str, split: str = "train") -> Dataset:
     if dataset_name not in dataset_configs:
         raise ValueError(
