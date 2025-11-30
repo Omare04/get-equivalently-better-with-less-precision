@@ -7,6 +7,10 @@ dataset_configs = {
         "path": "imdb",
         "splits": ["train", "test", "unsupervised"]
     },
+    "squad": {
+        "path": "squad",
+        "splits": ["train", "validation"]
+    },
     "wikitext": {
         "path": "wikitext",
         "name": "wikitext-2-raw-v1",

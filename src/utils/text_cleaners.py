@@ -36,8 +36,6 @@ def _preprocessWikitext(batch: Dict) -> Dict:
         text = clean_spaces(text)
         if text:
             cleaned_texts.append(text)
-        if text != "":
-            cleaned_texts.append(text)
     
     return {'text': cleaned_texts} 
 

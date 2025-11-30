@@ -1,0 +1,25 @@
+{
+  "wikitext": {
+    "perplexity": 94.02924063130205,
+    "loss": 4.543605804443359
+  },
+  "imdb": {
+    "accuracy": 0.65625
+  },
+  "sst2": {
+    "accuracy": 0.53125
+  },
+  "squad": {
+    "exact_match": 0.0
+  },
+  "meta": {
+    "cuda_available": true,
+    "device_count": 1,
+    "gpu_name": "NVIDIA GeForce RTX 3090",
+    "total_memory_gb": 23.56,
+    "compute_capability": "8.6",
+    "driver_version": "12.1",
+    "torch_version": "2.5.1+cu121",
+    "python_version": "3.10.18 | packaged by conda-forge | (main, Jun  4 2025, 14:45:41) [GCC 13.3.0]"
+  }
+}

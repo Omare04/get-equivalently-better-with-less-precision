@@ -1,0 +1,14 @@
+{
+  "wikitext": {
+    "perplexity": 50.033953510238234
+  },
+  "imdb": {
+    "accuracy": 0.71875
+  },
+  "sst2": {
+    "accuracy": 0.78125
+  },
+  "squad": {
+    "exact_match": 0.0
+  }
+}
