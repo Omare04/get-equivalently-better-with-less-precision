@@ -68,6 +68,7 @@ def main():
         "IMDB Accuracy": {name: r.get("imdb", {}).get("accuracy") for name, r in results.items()},
         "SST2 Accuracy": {name: r.get("sst2", {}).get("accuracy") for name, r in results.items()},
         "SQuAD Exact Match": {name: r.get("squad", {}).get("exact_match") for name, r in results.items()},
+        "SQuAD F1": {name: r.get("squad", {}).get("f1") for name, r in results.items()},
     }
 
     for metric_name, vals in metrics.items():

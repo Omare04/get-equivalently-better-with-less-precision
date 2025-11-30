@@ -2,6 +2,9 @@ import json
 import math
 import os
 from pathlib import Path
+import re
+import string
+from collections import Counter
 from typing import Dict, List, Optional
 
 import torch
@@ -18,6 +21,46 @@ def _collate_dicts(examples: List[Dict]) -> Dict:
 
 def _normalize_text(text: str) -> str:
     return " ".join(text.lower().split())
+
+
+def _normalize_answer(text: str) -> str:
+    """
+    Standard SQuAD-style normalization: lowercase, strip punctuation/articles, and squeeze whitespace.
+    """
+    text = text.lower()
+    text = "".join(ch if ch not in string.punctuation else " " for ch in text)
+    text = re.sub(r"\b(a|an|the)\b", " ", text)
+    text = " ".join(text.split())
+    return text
+
+
+def _f1_score(prediction: str, gold_texts: List[str]) -> float:
+    """
+    Compute token-level F1 between a prediction and a list of gold answers.
+    Uses the max F1 across gold answers, as in SQuAD evaluation.
+    """
+    pred_tokens = _normalize_answer(prediction).split()
+    if not pred_tokens:
+        return 0.0
+
+    best_f1 = 0.0
+    for gold in gold_texts:
+        gold_tokens = _normalize_answer(gold).split()
+        if not gold_tokens:
+            continue
+
+        common = Counter(pred_tokens) & Counter(gold_tokens)
+        overlap = sum(common.values())
+        if overlap == 0:
+            f1 = 0.0
+        else:
+            precision = overlap / len(pred_tokens)
+            recall = overlap / len(gold_tokens)
+            f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) else 0.0
+
+        best_f1 = max(best_f1, f1)
+
+    return best_f1
 
 
 def perplexity_eval(
@@ -150,6 +193,7 @@ def squad_eval(
     tokenizer.pad_token = tokenizer.eos_token
 
     exact = 0
+    f1_total = 0.0
     total = 0
     model.eval()
 
@@ -177,14 +221,18 @@ def squad_eval(
                 new_tokens = generated[0][inputs["input_ids"].shape[1]:]
                 prediction = tokenizer.decode(new_tokens, skip_special_tokens=True)
 
-                pred_norm = _normalize_text(prediction)
-                gold_norms = [_normalize_text(ans) for ans in answers["text"]]
+                pred_norm = _normalize_answer(prediction)
+                gold_norms = [_normalize_answer(ans) for ans in answers["text"]]
 
                 if pred_norm in gold_norms:
                     exact += 1
+                f1_total += _f1_score(prediction, answers["text"])
                 total += 1
 
-    return {"exact_match": exact / total if total else 0.0}
+    return {
+        "exact_match": exact / total if total else 0.0,
+        "f1": f1_total / total if total else 0.0,
+    }
 
 
 def alpaca_eval_preview(

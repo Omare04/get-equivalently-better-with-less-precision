@@ -1,25 +1,22 @@
 {
   "wikitext": {
-    "perplexity": 112.25871039956571,
-    "loss": 4.720806121826172
+    "perplexity": 31.896218459759275,
+    "loss": 3.4624874591827393
   },
   "imdb": {
-    "accuracy": 0.703125
+    "accuracy": 0.59375
   },
   "sst2": {
-    "accuracy": 0.796875
+    "accuracy": 0.59375
   },
   "squad": {
-    "exact_match": 0.0
+    "exact_match": 0.0,
+    "f1": 0.1019137046710576
   },
   "meta": {
-    "cuda_available": true,
-    "device_count": 1,
-    "gpu_name": "NVIDIA GeForce RTX 3090",
-    "total_memory_gb": 23.56,
-    "compute_capability": "8.6",
-    "driver_version": "12.1",
-    "torch_version": "2.5.1+cu121",
-    "python_version": "3.10.18 | packaged by conda-forge | (main, Jun  4 2025, 14:45:41) [GCC 13.3.0]"
+    "cuda_available": false,
+    "device_count": 0,
+    "torch_version": "2.9.1+cpu",
+    "python_version": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:09:02) [GCC 11.2.0]"
   }
 }
